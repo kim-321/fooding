@@ -1,0 +1,144 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    color: #333;
+}
+
+.search-bar {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-bar button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-buttons button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.order-list {
+    list-style: none;
+    padding: 0;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.order-item .order-date {
+    width: 80px;
+    text-align: center;
+    color: #777;
+}
+
+.order-item .order-details {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.order-item .order-details img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.order-item .product-info {
+    flex-grow: 1;
+}
+
+.order-item .product-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.order-item .product-price {
+    color: #007bff;
+}
+
+.order-item .order-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-item .order-actions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    text-align: center;
+}
+
+.order-item .order-actions button a {
+    color: white;
+    text-decoration: none;
+}
+
+
+.menu-icon {
+    font-size: 2em; 
+}
+
+
+.header-search input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 20px;
+    width: 600px; 
+}

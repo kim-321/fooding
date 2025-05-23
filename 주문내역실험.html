@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음식 주문</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .food-item {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .food-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer; 
+        }
+        .food-item p {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .add-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .add-button:hover {
+            background-color: #218838;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button-container a:hover {
+            background-color: #0056b3;
+        }
+        #order-summary {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #order-summary h2 {
+            margin-top: 0;
+        }
+        #order-list {
+            list-style: none;
+            padding: 0;
+        }
+        #order-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        #order-list li .order-details {
+            display: flex;
+            align-items: center;
+        }
+        #order-list li img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        #order-list li .product-info {
+            flex-grow: 1;
+        }
+        #order-list li .product-name {
+            font-weight: bold;
+        }
+        #order-list li .product-price {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>음식 주문</h1>
+        <div id="food-menu">
+            <div class="food-item">
+                <img src="{{ url_for('static', filename='pizza.jpg') }}" alt="피자">
+                <p>피자</p>
+                <p>₩10000</p>
+                <button class="add-button" onclick="sendOrder('피자', 10000, 'static/pizza.jpg')">추가하기</button>
+            </div>
+            <div class="food-item">
+                <img src="{{ url_for('static', filename='burger.jpg') }}" alt="햄버거">
+                <p>햄버거</p>
+                <p>₩5000</p>
+                <button class="add-button" onclick="sendOrder('햄버거', 5000, 'static/burger.jpg')">추가하기</button>
+            </div>
+            <div class="food-item">
+                <img src="{{ url_for('static', filename='salad.jpg') }}" alt="샐러드">
+                <p>샐러드</p>
+                <p>₩7000</p>
+                <button class="add-button" onclick="sendOrder('샐러드', 7000, 'static/salad.jpg')">추가하기</button>
+            </div>
+        </div>
+
+        <div id="order-summary">
+            <h2>주문 내역</h2>
+            <ul id="order-list">
+                </ul>
+            <p id="no-orders" style="display: none;">주문 내역이 없습니다.</p>
+        </div>
+
+        <div class="button-container">
+            <a href="/">주문 내역 보기</a>
+        </div>
+    </div>
+
+    <script>
+        function sendOrder(name, price, image) {
+            fetch('/add_to_order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, price: price, image: image }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`${name}이(가) 주문 내역에 추가되었습니다.`);
+                    // 성공적으로 주문이 추가되면 주문 내역 페이지로 리다이렉트
+                    window.location.href = '/';
+                } else {
+                    alert('주문 추가에 실패했습니다.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('서버와 통신 중 오류가 발생했습니다.');
+            });
+        }
+    </script>
+
+</body>
+</html>

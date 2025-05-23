@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 내역 - Food.ing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f8f8f8; color: #333; }     
+        .container { max-width: 1500px; margin: 20px auto; display: flex; }     
+
+        
+        .header { background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; }        
+        .header-logo img { height: 50px; margin-left: 20px; }      
+        .header-search input[type="text"] { padding: 15px; border: 1px solid #ccc; border-radius: 6px; margin-left: 20px; }  
+        .header-icons { display: flex; align-items: center; gap: 20px; }
+        .header-icons a { color: #555; text-decoration: none; font-size: 1.2em; position: relative; }
+        .header-icons .cart-badge { position: absolute; top: -5px; right: -5px; background-color: red; color: white; font-size: 0.7em; padding: 3px 5px; border-radius: 50%; }
+
+        .sidebar { width: 200px; background-color: #fff; border-right: 1px solid #eee; padding: 20px; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li a { display: block; padding: 10px 0; text-decoration: none; color: #555; }
+        .sidebar li a.active { color: #007bff; font-weight: bold; }
+
+        .main-content { flex-grow: 1; padding: 20px; }
+        .main-content h2 { margin-top: 0; margin-bottom: 20px; }
+        .content-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px; }
+        .content-header .search-bar input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 400px;
+            background-color: #fff;
+        }
+        .filter-buttons {    
+            display: flex;
+            gap: 25px;            
+            margin-bottom: 20px;    
+            justify-content: flex-start;
+        }
+        .filter-buttons button {
+            padding: 8px 30px;      
+            border: 1px solid #ddd;     
+            border-radius: 10px;        
+            background-color: #fff;
+            color: #555;
+            cursor: pointer;
+        }
+        .filter-buttons button.active {
+            background-color: #007bff;  
+            color: white;
+            border-color: #007bff;
+        }
+
+        .order-list { list-style: none; padding: 0; }
+        .order-item {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .order-item .order-date { width: 80px; color: #777; font-size: 0.9em; }
+        .order-item .order-details { flex-grow: 1; display: flex; align-items: center; gap: 15px; }
+        .order-item .order-details img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; }
+        .order-item .product-info { flex-grow: 1; }
+        .order-item .product-name { font-weight: bold; margin-bottom: 5px; }
+        .order-item .product-price { color: #007bff; }
+        .order-actions { display: flex; gap: 5px; }
+        .order-actions button {
+            background-color: #fff;
+            color: #007bff;
+            border: 1px solid #007bff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-align: center;
+            text-decoration: none;
+        }
+        .order-actions button a { color: #007bff; text-decoration: none; }
+
+        .new-order-button-container { text-align: center; margin-top: 20px; }
+        .new-order-button-container a { display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; }
+        .new-order-button-container a:hover { background-color: #218838; }
+
+        .content-header .search-bar input[type="text"] {
+            width: 900px; 
+        }
+
+
+    </style>
+</head>
+
+
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <a href="#" class="menu-icon">☰</a>
+            <a href="#" class="header-logo"><img src="{{ url_for('static', filename='food_ing_logo.png') }}" alt="Food.ing"></a>
+            <div class="header-search">
+                <input type="text" placeholder="검색어를 입력하세요">
+            </div>
+        </div>
+        <div class="header-icons">
+            <a href="#" class="user-icon">👤</a>
+            <a href="#" class="cart-icon">
+                장바구니
+                <span class="cart-badge">0</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="#">마이 쇼핑 홈</a></li>
+                <li><a href="/" class="active">주문 내역</a></li>
+                <li><a href="#">관심 상품</a></li>
+                <li><a href="#">리뷰 확인</a></li>
+                <li><a href="#">관심 스토어</a></li>
+                <li><a href="#">정기 구독</a></li>
+                <li><a href="#">무료 체험</a></li>
+                <li><a href="#">상품 Q&A</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">      
+                <h2>주문 내역</h2>
+                <div class="search-bar">              
+                    <input type="text" placeholder="주문 내역 검색">
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button type="button" class="active">전체</button>
+                <button type="button">1개월</button>
+                <button type="button">3개월</button>
+                <button type="button">6개월</button>
+            </div>
+            <ul class="order-list">
+                {% for item in current_order %}
+                <li class="order-item">
+                    <div class="order-date">{{ item.date }}</div>
+                    <div class="order-details">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                        <div class="product-info">
+                            <div class="product-name">{{ item.name }}</div>
+                            <div class="product-price">₩{{ item.price }}</div>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button type="button"><a href="#">리뷰 작성</a></button>
+                        <button type="button"><a href="#">판매자 문의</a></button>
+                    </div>
+                </li>
+                {% endfor %}
+                {% if not current_order %}
+                <p>주문 내역이 없습니다.</p>
+                {% endif %}
+            </ul>
+            <div class="new-order-button-container">
+                <a href="/order_food" style="background-color: #007bff; color: white; border-radius: 20px; padding: 10px 20px; text-decoration: none;">새로운 주문하기</a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const filterButtons = document.querySelectorAll('.filter-buttons button');
+        const orderListContainer = document.querySelector('.order-list');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const period = this.textContent;
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterOrders(period);
+            });
+        });
+
+        function filterOrders(period) {
+            fetch('/filter_orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ period: period }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayFilteredOrders(data.filtered_orders);
+            })
+            .catch(error => {
+                console.error('Error filtering orders:', error);
+                alert('주문 내역 필터링 중 오류가 발생했습니다.');
+            });
+        }
+
+        function displayFilteredOrders(orders) {
+            orderListContainer.innerHTML = '';
+
+            if (orders.length === 0) {
+                orderListContainer.innerHTML = '<p>해당 기간의 주문 내역이 없습니다.</p>';
+                return;
+            }
+
+            orders.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('order-item');
+                listItem.innerHTML = `
+                    <div class="order-date">${item.date}</div>
+                    <div class="order-details">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="product-info">
+                            <div class="product-name">${item.name}</div>
+                            <div class="product-price">₩${item.price}</div>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button type="button" class="write-review-button" data-order-id="${item.name.replace(/ /g, '_')}">리뷰 작성</button>
+                        <button type="button"><a href="#">판매자 문의</a></button>
+                    </div>
+                `;
+                orderListContainer.appendChild(listItem);
+            });
+
+            const reviewButtons = document.querySelectorAll('.order-actions button.write-review-button');
+            reviewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.dataset.orderId;
+                    const reviewUrl = `/review_write?order_id=${orderId}`;
+                    window.open(reviewUrl, '_blank');
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            filterOrders('전체');
+        });
+    </script>
+
+
+</body>
+</html>
+
