@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Food.ing 상품 상세</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+       
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header .logo img {
+            height: 80px; 
+            width: auto; 
+            margin-left: 20px;
+        }
+
+        .header .icons {
+            display: flex;
+            gap: 20px;
+        }
+        .header .icons a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .product-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap; /* 반응형을 위해 wrap 추가 */
+            gap: 30px;
+        }
+
+        .product-image-section {
+            flex: 1;
+            min-width: 300px; 
+            max-width: 450px; 
+        }
+        .product-image-section img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+        }
+
+        .product-info-section {
+            flex: 2;
+            min-width: 450px; /* 최소 너비 설정 */
+        }
+        .product-breadcrumb {
+            font-size: 0.9em;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        .product-name {
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .product-price {
+            font-size: 1.8em;
+            color: #4f2b22;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        .additional-info p {
+            margin: 8px 0;
+            color: #555;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        .quantity-selector label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #333;
+        }
+        .quantity-selector input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1em;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .action-buttons button.primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .action-buttons button.primary:hover {
+            background-color: #0056b3;
+        }
+        .action-buttons button.secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .action-buttons button.secondary:hover {
+            background-color: #5a6268;
+        }
+
+
+        /* 탭 메뉴 스타일 */
+        .tabs-section {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 0 30px 30px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #555;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+        .tab-button:hover {
+            color: #007bff;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #007bff;
+            color: #007bff;
+        }
+        .tab-content {
+            padding: 20px 0;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        /* 리뷰 섹션 */
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .review-item p {
+            margin: 5px 0;
+        }
+        .review-item strong {
+            color: #333;
+        }
+        .review-item small {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .review-form-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .review-form-section h4 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: calc(100% - 22px); 
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .review-form-section button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .review-form-section button[type="submit"]:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <a href="/">
+               <img src="{{ url_for('static', filename='food_ing_logo.png') }}" alt="Food.ing 로고">
+            </a>
+        </div>
+        <div class="icons">
+            <a href="#"><i class="fas fa-search"></i></a> <a href="#"><i class="fas fa-user"></i></a>   <a href="#"><i class="fas fa-shopping-cart"></i> <span>0</span></a> </div>
+    </div>
+
+    <div class="product-container">
+        <div class="product-image-section">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+
+        <style>
+        .product-image img {
+            max-width: 100%; 
+            height: auto; 
+            display: block; 
+            margin-bottom: 20px; 
+        }
+        </style>
+
+        <div class="product-info-section">
+            <p class="product-breadcrumb">yoajung ></p>
+            <h1 class="product-name">{{ product.name }}</h1>
+            <p class="product-price">₩{{ product.price }}</p>
+
+            <div class="additional-info">
+                <p><strong>제조사:</strong> {{ product.manufacturer }}</p>
+                <p><strong>원산지:</strong> {{ product.origin }}</p>
+                <p><strong>배송정보:</strong> {{ product.delivery_info }}</p>
+            </div>
+
+            <div class="quantity-selector">
+                <label for="quantity">수량:</label>
+                <input type="number" id="quantity" value="1" min="1">
+            </div>
+            <div class="action-buttons">
+                <button class="primary" onclick="addToCart('{{ product.product_id }}', document.getElementById('quantity').value)">장바구니</button>
+                <button class="secondary">공유하기</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-section">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('detail')">상세정보</button>
+            <button class="tab-button" onclick="showTab('info')">기본정보</button>
+            <button class="tab-button" onclick="showTab('reviews')">상품후기 ({{ product.reviews|length if product.reviews else 0 }})</button>
+        </div>
+
+        <div id="tab-detail" class="tab-content">
+            <h3>상품 상세 정보</h3>
+            <p>{{ product.description if product.description else '상세 정보가 준비 중입니다.' }}</p>
+        </div>
+
+        <div id="tab-info" class="tab-content" style="display: none;">
+            <h3>기본 정보</h3>
+            <p>
+                상품명: {{ product.name }}<br>
+                가격: ₩{{ product.price }}<br>
+                제조사: {{ product.manufacturer }}<br>
+                원산지: {{ product.origin }}<br>
+                배송: {{ product.delivery_info }}<br>
+                </p>
+        </div>
+
+        <div id="tab-reviews" class="tab-content" style="display: none;">
+            <h3>상품 후기</h3>
+            {% if product.reviews %}
+                {% for review in product.reviews %}
+                    <div class="review-item">
+                        <p><strong>평점:</strong> {{ review.rating }}</p>
+                        <p>{{ review.comment }}</p>
+                        <small>{{ review.user }} - {{ review.date }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>아직 작성된 후기가 없습니다.</p>
+            {% endif %}
+
+            <div class="review-form-section">
+                <h4>나만의 후기 작성하기</h4>
+                <form action="/submit_product_review" method="post">
+                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                    <div class="form-group">
+                        <label for="review_rating">평점 (1~5):</label>
+                        <input type="number" id="review_rating" name="rating" min="1" max="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="review_comment">리뷰 내용:</label>
+                        <textarea id="review_comment" name="comment" rows="5" required></textarea>
+                    </div>
+                    <button type="submit">리뷰 제출</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.style.display = 'none');
+
+
+            document.getElementById(`tab-${tabId}`).style.display = 'block';
+
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+
+            document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showTab('detail');
+        });
+
+        function addToCart(productId, quantity) {
+            fetch('/add_to_cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_id: productId, quantity: quantity }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                } else {
+                    alert('장바구니 추가 실패: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('장바구니 추가 중 오류가 발생했습니다.');
+            });
+        }
+        
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>
+
+
