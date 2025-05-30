@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food.ing - 맛있는 음식을 주문하세요!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* 메인 페이지 전용 CSS */
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f8f8f8; color: #333; }
+        .container { max-width: 1500px; margin: 20px auto; display: flex; }
+        .header { background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; }
+        .header-logo img { height: 80px; width: auto; margin-left: 20px; }
+        .header-search input[type="text"] { padding: 15px; border: 1px solid #ccc; border-radius: 6px; margin-left: 20px; }
+        .header-icons { display: flex; align-items: center; gap: 20px; }
+        .header-icons a { color: #555; text-decoration: none; font-size: 1.2em; position: relative; }
+        .header-icons .cart-badge { position: absolute; top: -5px; right: -5px; background-color: red; color: white; font-size: 0.7em; padding: 3px 5px; border-radius: 50%; }
+
+        .sidebar { width: 200px; background-color: #fff; border-right: 1px solid #eee; padding: 20px; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li a { display: block; padding: 10px 0; text-decoration: none; color: #555; }
+        .sidebar li a.active { color: #007bff; font-weight: bold; }
+
+        .main-content { flex-grow: 1; padding: 20px; }
+        .main-content h2 { margin-top: 0; margin-bottom: 20px; }
+
+        .main-banner {
+            width: 100%;
+            height: 300px;
+            background-image: url('{{ url_for('static', filename='caramel_pudding_banner.jpg') }}'); /* 배너 이미지 경로, static에 추가해야 함 */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5em; /* 폰트 크기 조정 */
+            font-weight: bold; /* 폰트 굵기 추가 */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7); /* 그림자 효과 강화 */
+            margin-bottom: 30px; /* 아래 여백 조정 */
+            border-radius: 10px; /* 모서리 둥글게 */
+        }
+
+        .category-icons {
+            display: flex;
+            justify-content: center;
+            gap: 25px; /* 간격 조정 */
+            margin-bottom: 40px; /* 아래 여백 조정 */
+            flex-wrap: wrap;
+        }
+
+        .category-item {
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.2s ease-in-out; /* 호버 효과 추가 */
+        }
+
+        .category-item:hover {
+            transform: translateY(-5px); /* 호버 시 위로 살짝 이동 */
+        }
+
+        .category-item img {
+            width: 90px; /* 아이콘 크기 조정 */
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd; /* 테두리 강조 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* 그림자 강조 */
+        }
+
+        .category-item p {
+            margin-top: 12px; /* 위 여백 조정 */
+            font-size: 1em; /* 폰트 크기 조정 */
+            font-weight: bold;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px; /* 간격 조정 */
+            margin-bottom: 25px; /* 아래 여백 조정 */
+            justify-content: flex-start;
+        }
+        .filter-buttons button {
+            padding: 10px 25px; /* 패딩 조정 */
+            border: 1px solid #ddd;
+            border-radius: 20px; /* 모서리 둥글게 */
+            background-color: #fff;
+            color: #555;
+            cursor: pointer;
+            font-weight: bold; /* 폰트 굵기 */
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .filter-buttons button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .filter-buttons button:hover:not(.active) {
+            background-color: #f0f0f0;
+        }
+
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 최소 너비 조정 */
+            gap: 25px; /* 간격 조정 */
+            padding: 0 5px; /* 좌우 패딩 */
+        }
+
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px; /* 모서리 둥글게 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 그림자 강조 */
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px; /* 아래 패딩 조정 */
+            transition: transform 0.2s ease-in-out;
+            text-decoration: none; /* 링크 밑줄 제거 */
+            color: #333; /* 텍스트 색상 */
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px); /* 호버 시 위로 더 이동 */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); /* 그림자 더 강조 */
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 220px; /* 이미지 높이 조정 */
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px; /* 아래 여백 조정 */
+        }
+
+        .product-card h3 {
+            font-size: 1.2em; /* 폰트 크기 조정 */
+            margin: 0 0 8px 0; /* 마진 조정 */
+            color: #222;
+        }
+
+        .product-card p {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.2em; /* 폰트 크기 조정 */
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            background-color: #f0f0f0;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="#" class="menu-icon">☰</a>
+            <a href="/" class="header-logo"><img src="{{ url_for('static', filename='food_ing_logo.png') }}" alt="Food.ing"></a>
+            <div class="header-search">
+                <input type="text" placeholder="검색어를 입력하세요">
+            </div>
+        </div>
+        <div class="header-icons">
+            <a href="#" class="user-icon">👤</a>
+            <a href="#" class="cart-icon">
+                장바구니
+                <span class="cart-badge">0</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="/" class="active">홈</a></li>
+                <li><a href="/order_history">주문 내역</a></li>
+                <li><a href="#">마이 페이지</a></li>
+                <li><a href="#">장바구니</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="main-banner">
+                <h1>오늘의 특별한 디저트와 식사</h1>
+            </div>
+
+            <h2>인기 카테고리</h2>
+            <div class="category-icons">
+                <a href="/category/pudding" class="category-item">
+                    <img src="{{ url_for('static', filename='pudding_icon.jpg') }}" alt="푸딩">
+                    <p>푸딩</p>
+                </a>
+                <a href="/category/cake" class="category-item">
+                    <img src="{{ url_for('static', filename='cake_icon.jpg') }}" alt="케이크">
+                    <p>케이크</p>
+                </a>
+                <a href="/category/bread" class="category-item">
+                    <img src="{{ url_for('static', filename='bread_icon.jpg') }}" alt="빵">
+                    <p>빵</p>
+                </a>
+                <a href="/category/cookie" class="category-item">
+                    <img src="{{ url_for('static', filename='cookie_icon.jpg') }}" alt="쿠키">
+                    <p>쿠키</p>
+                </a>
+                <a href="/category/chocolate" class="category-item">
+                    <img src="{{ url_for('static', filename='chocolate_icon.jpg') }}" alt="초콜릿">
+                    <p>초콜릿</p>
+                </a>
+                <a href="/category/macaron" class="category-item">
+                    <img src="{{ url_for('static', filename='macaron_icon.jpg') }}" alt="마카롱">
+                    <p>마카롱</p>
+                </a>
+            </div>
+
+            <h2>추천 상품</h2>
+            <div class="filter-buttons">
+                <button type="button" class="active">전체</button>
+                <button type="button">베스트</button>
+                <button type="button">신상품</button>
+            </div>
+            <div class="product-grid">
+                {% for product in products %}
+                <a href="/product/{{ product.product_id }}" class="product-card">
+                    <img src="{{ product.image }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>₩{{ '{:,.0f}'.format(product.price) }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Food.ing. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 향후 동적 필터링 등의 JavaScript 기능을 추가할 수 있습니다.
+        // 예를 들어, 카테고리 버튼 클릭 시 AJAX로 상품 목록을 업데이트하는 기능 등.
+    </script>
+</body>
+</html>
